@@ -1,0 +1,42 @@
+1.Write a query that returns the top 5 users and their emails by total gross orders (only successful orders) in the last 1 year by active vendor type with ordering by the oldest user on the platform. 
+
+WITH RESULT AS(
+SELECT  USER_ID, SUM(AMT) AS GROSS_AMOUNT,U.ADDED_AT
+FROM
+"DEMO_DB"."PUBLIC"."FCT_ORDERS" F
+JOIN
+"DEMO_DB"."PUBLIC"."DIM_VENDORS" V
+ON F.VENDOR_ID=V.ID
+JOIN
+"DEMO_DB"."PUBLIC"."DIM_USERS" U
+ON F.USER_ID=U.ID
+WHERE STATUS = 0 AND TO_DATE(PLACED_AT) > DATEADD(YEAR,-1,CURRENT_DATE) AND V.IS_ACTIVE='TRUE'
+GROUP BY USER_ID,U.ADDED_AT
+ORDER BY U.ADDED_AT )
+SELECT TOP 1 * FROM RESULT ORDER BY GROSS_AMOUNT DESC
+
+2.Write a query that returns the vendor id and vendor type that did the most in monetary amount of failed orders in the last 3 years.
+
+WITH RESULT AS(
+SELECT V.ID, V.TYPE, SUM(AMT) AS AMOUNT
+FROM
+"DEMO_DB"."PUBLIC"."FCT_ORDERS" F
+JOIN
+"DEMO_DB"."PUBLIC"."DIM_VENDORS" V
+ON F.VENDOR_ID=V.ID
+WHERE F.STATUS=3 AND TO_DATE(ADDED_AT) > DATEADD(YEAR,-3,CURRENT_DATE)
+GROUP BY V.ID , V.TYPE)
+SELECT TOP 1 * FROM RESULT ORDER BY AMOUNT DESC
+
+3.  Write a query that returns the vendor id and vendor type of the top 3 worst performing vendors where worst performing is classified as having the most in non-successful orders in terms of monetary value.  
+
+WITH RESULT AS(
+SELECT V.ID, V.TYPE, SUM(AMT) AS AMOUNT
+FROM
+"DEMO_DB"."PUBLIC"."FCT_ORDERS" F
+JOIN
+"DEMO_DB"."PUBLIC"."DIM_VENDORS" V
+ON F.VENDOR_ID=V.ID
+WHERE F.STATUS!=0
+GROUP BY V.ID , V.TYPE)
+SELECT TOP 3 * FROM RESULT ORDER BY AMOUNT DESC

@@ -1,0 +1,96 @@
+dim_users:
+- id primary key
+- name required
+- phone optional
+- added_at timestamp required
+- deactivated_at timestamp optional
+- email required
+- is_active boolean optional default false
+- constraint name, phone, email are all unique
+
+
+create table dim_users
+(id varchar(50) primary key,
+name varchar(50) unique,
+phone number unique,
+added_at timestamp,
+deactivated_at timestamp,
+email varchar(50) unique,
+is_active boolean)
+
+
+INSERT INTO "DEMO_DB"."PUBLIC"."DIM_USERS"(ID,NAME,PHONE,ADDED_AT,DEACTIVATED_AT,EMAIL,IS_ACTIVE)
+VALUES
+  ('1','Allin','+7 655 568 4488','2020-02-19 01:49:58','2020-03-24 11:51:31','audell0@4shared.com','true'),
+  ('2','Ann','+86 836 201 5654','2021-02-02 15:03:57','2020-01-13 11:39:21','aeshelby1@who.int','true'),
+('3','Patrizius','+33 192 607 8313','2020-12-06 23:33:28','2019-04-09 17:25:30','plimer2@about.me','false'),
+('4','Milicent','+33 900 215 9295','2019-06-03 20:32:47','2020-09-11 11:49:44','mpeert3@time.com','false'),
+('5','Zena','+62 684 447 6816','2020-05-04 22:05:20','2019-08-11 19:36:01','zbuttler4@issuu.com','false')
+  
+dim_vendors:
+- id primary key
+- type number not null /* 1 - grocery delivery, 2 - cooked meal delivery e.g McDonalds, 3 - other */
+- added_at timestamp required
+- removed_at timestamp optional
+- is_active boolean optional default false
+- is_platform_online boolean optional default false /* a vendor can be active but offline if it's in a testing phase */
+
+create table dim_vendors
+(id varchar(50) primary key,
+type number not null,
+added_at timestamp,
+removed_at timestamp,
+is_active boolean default 'false',
+is_platform_online boolean 'false')
+
+INSERT INTO "DEMO_DB"."PUBLIC"."DIM_VENDORS"(ID,TYPE,ADDED_AT,REMOVED_AT,IS_ACTIVE,IS_PLATFORM_ONLINE)
+VALUES
+('v1', 1,'2021-06-22 09:54:15','2020-10-25 04:56:30','false', 'true'),
+('v2', 2,'2021-06-23 09:54:15','2020-10-28 04:56:30','true', 'false'),
+('v3', 3,'2021-06-24 09:54:15','2020-10-24 04:56:30','false', 'true'),
+('v4', 5,'2021-06-25 09:54:15','2020-10-21 04:56:30','true', 'false'),
+('v5', 1,'2021-06-26 09:54:15','2020-10-23 04:56:30','false', 'true'),
+('v6', 2,'2021-06-27 09:54:15','2020-10-29 04:56:30','true', 'false')
+
+
+
+fct_orders:
+- id primary key
+- status number required /* -1 cancelled, 0 success, 2 returned, 3 failed */
+- amt money required
+- placed_at timestamp required
+- cancelled_at timestamp optional
+- returend_at timestamp optional
+- failed_at timestamp optional /* some system error caused the order to fail perhaps around or after payment */
+- vendor_id foreign key to dim_vendor(id)
+- user_id foreign key to dim_user(id)
+
+create table fct_orders
+(id varchar(50) primary key,
+status number,
+amt int,
+placed_at timestamp,
+cancelled_at timestamp,
+returend_at timestamp,
+failed_at timestamp,
+vendor_id varchar(50)  references dim_vendors(id),
+user_id varchar(50) references dim_users(id));
+
+INSERT INTO "DEMO_DB"."PUBLIC"."FCT_ORDERS"(ID,STATUS,AMT,PLACED_AT,CANCELLED_AT,RETUREND_AT,FAILED_AT,VENDOR_ID,USER_ID)
+VALUES
+('f1', -1,1100,'2021-06-22 09:54:15','2020-10-25 04:56:30',null,null,'v1', '1'),
+('f2', 2,2000,'2021-06-23 09:54:15',null,'2021-06-23 09:54:15',null,'v2', '2'),
+('f3', 3,6500,'2021-06-24 09:54:15','2020-10-24 04:56:30',null,null,'v3', '3'),
+('f4', 0,3400,'2021-06-25 09:54:15','2020-10-21 04:56:30',null,null,'v4', '4'),
+('f5', 0,2800,'2021-06-26 09:54:15',null,null,null,'v5', '5'),
+('f6', 0,1200,'2021-06-27 09:54:15',null,'2021-06-27 09:54:15',null,'v6', '1')
+
+
+
+
+
+
+
+
+
+
