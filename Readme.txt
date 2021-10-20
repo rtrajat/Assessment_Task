@@ -12,3 +12,5 @@ Also there will be three sheets one named as DDL containing DDL and DML queries.
 
 The other three named as Q1, Q2, Q3 referes to task 1,2,3.
 
+Q3 solution is uploaded in python along with the two csv being used for that.
+
